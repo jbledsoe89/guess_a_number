@@ -18,8 +18,12 @@ def GetCustomStartingNumber(first_number):
         print("Please select a starting number between 0 and 100.")
         print("Default number is: " + str(first_number))
         integer = GetIntegerOnlyInput()
-        if integer >= 0 and integer <= 100:
-            return integer
+        if integer >= 0 and integer <= 90:
+            if integer >= 90:
+                print("You think you're smart, don't ya?")
+                return 90
+            else:
+                return integer
         else:
             print("Not cool man. Invalid number..")
             
@@ -33,7 +37,9 @@ def GetCustomEndingNumber(first_number, second_number):
         print("This number must be greater than the starting number.")
         integer = GetIntegerOnlyInput()
         if integer >= 0 and integer <= 100:
-            if integer > first_number:
+            if integer == 90:
+                return 100
+            elif integer > first_number:
                 return integer
             else:
                 print("Don't play me. Pick a different number.")
@@ -81,33 +87,12 @@ def PrintRandomGuessString(guess):
 
 # Function to print three dots in 1 second intervals.
 def PrintWaitDots():
-    for i in range(2):
+    for i in range(3):
         print(".")
-        time.sleep(1)
-        
-# Function to increment guess count if it's under 3 guesses otherwise print you lose.
-def IncrementGuessCount(game_variables, guess_count):
-    
-    if guess_count < 3:
-        return guess_count + 1
-    else:
-        print("You lose!")
-        print("Thanks for playing!")
-        PrintWaitDots()
-        # Do you want to try again?
-        print("Do you want to try again? [Please type Yes or No]")
-        while True:
-            userInput = input()
-            if userInput == "Yes" or "yes":
-                main(game_variables)
-            elif userInput == "No" or "no":
-                print("Thanks for playing!")
-                exit()
-            else:
-                print("Hey.. you need to select yes or no..")
+        time.sleep(0.25)
                 
 # Main Game Function
-def main(game_variables):
+def main_game(game_variables):
     
     # Let's assign each value in the list game_variables to a variable named first_number, second_number, level, and mode.
     first_number, second_number, level, mode = game_variables
@@ -120,44 +105,58 @@ def main(game_variables):
     print("Now guess a number between " + str(first_number) + " and " + str(second_number) + ".")
     if mode == "easy":
         print("The first guess is always free when it's Ez.")
+        guesses = 3 - guess_count + 1
+        print("You have " + str(guesses) + " guesses left.")
     else:
         print("You have " + str(guesses) + " guesses left.")
-        guesses = 3 - guess_count - 1
         
     magic_number = random.randint(first_number, second_number)
-    while True:
-        guess = GetIntegerOnlyInput()
-        guesses = 3 - guess_count
-        if guess == magic_number:
-            PrintRandomVictoryString()
-            PrintWaitDots()
-            break
-        elif guess > magic_number:
+    guess = GetIntegerOnlyInput()
+    # Function to get three guesses higher or lower than the magic_number
+    while guess != magic_number:
+        if guess > magic_number:
             print("----------------------------------------")
             PrintRandomGuessString("high")
-            print("You only have " + str(guesses) + " guesses.")
-            guess_count = IncrementGuessCount(game_variables, guess_count)            
         else:
             print("----------------------------------------")
-            PrintRandomGuessString("low")
-            print("You only have " + str(guesses) + " guesses.")
-            guess_count = IncrementGuessCount(game_variables, guess_count)  
-            
-    print("Continue to next level? [Please type Yes or No]")
-    while True:
-        userInput = input()
-        if userInput == "Yes" or "yes":
-            main(NextLevelIncrease(game_variables))
-        elif userInput == "No" or "no":
-            print("Thanks for playing!")
-            exit()
-        else:
-            print("Hey.. you need to select yes or no..")
-            
+            PrintRandomGuessString("low")          
+                    
+        guess_count = guess_count + 1
+        guesses = 3 - guess_count
+        print("You have " + str(guesses) + " guesses left.")
+        guess = GetIntegerOnlyInput()
+        if guess_count == 2:
+            print("You're out of guesses!")
+            print("The magic number was: " + str(magic_number))
+            print("Better luck next time.")
+            # Do you want to continue?
+            while True:
+                print("Do you want to play again? (y/n)")
+                play_again = input()
+                if play_again == "y":
+                    print("You're going back to level 1.")
+                    return main_game(game_variables)
+                elif play_again == "n":
+                    return False
+                else:
+                    print("Invalid input.")
+                    
+    if guess == magic_number:
+        PrintRandomVictoryString()
+        PrintWaitDots()
+        print("Do you want to continue? (y/n)")
+        while True:
+            play_again = input()
+            if play_again == "y":
+                return main_game(NextLevelIncrease(game_variables))
+            elif play_again == "n":
+                return False
+            else:
+                print("Invalid input.")                
+
 # Initial Global Settings
 game_variables = [1,10, 0, "easy"]
 first_number, second_number, level, mode = game_variables
-
 
 # Main Code
 print("----------------------------------------")
@@ -172,4 +171,5 @@ PrintWaitDots()
 second_number = GetCustomEndingNumber(first_number, second_number)
 PrintWaitDots()
 game_variables = [first_number, second_number, level, mode]
-main(game_variables)
+main_game(game_variables)
+quit()

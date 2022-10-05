@@ -1,9 +1,4 @@
 
-#Allow the user to change the range of numbers to choose from (such as 1-100 or 1-1000)
-#Keep track of the number of attempts needed
-#Add a "Play again?" option at the end
-#Add a leader board that tracks successes
-
 import random
 import time
 
@@ -123,7 +118,12 @@ def main(game_variables):
     print("Welcome to level " + str(level) + "!")
     print("You're playing on the " + mode + " difficulty mode.")
     print("Now guess a number between " + str(first_number) + " and " + str(second_number) + ".")
-    print("You only have " + str(guesses) + " guesses so choose wisely! Muhahaha")
+    if mode == "easy":
+        print("The first guess is always free when it's Ez.")
+    else:
+        print("You have " + str(guesses) + " guesses left.")
+        guesses = 3 - guess_count - 1
+        
     magic_number = random.randint(first_number, second_number)
     while True:
         guess = GetIntegerOnlyInput()

@@ -150,7 +150,7 @@ def main(game_variables):
             main(NextLevelIncrease(game_variables))
         elif userInput == "No" or "no":
             print("Thanks for playing!")
-            break
+            exit()
         else:
             print("Hey.. you need to select yes or no..")
             
